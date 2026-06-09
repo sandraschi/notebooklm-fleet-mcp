@@ -1,0 +1,32 @@
+[
+  {
+    "id": "arxiv-mcp",
+    "label": "arxiv-mcp",
+    "description": "Ingest papers into NotebookLM via fleet_ingest_arxiv",
+    "url": "http://127.0.0.1:10770"
+  },
+  {
+    "id": "aiwatcher-mcp",
+    "label": "aiwatcher-mcp",
+    "description": "AI news digests — candidate sources for NotebookLM notebooks",
+    "url": "http://127.0.0.1:10946"
+  },
+  {
+    "id": "advanced-memory-mcp",
+    "label": "memops",
+    "description": "Persist grounded NotebookLM synthesis to fleet memory",
+    "url": "http://127.0.0.1:10704"
+  },
+  {
+    "id": "agy-fleet-mcp",
+    "label": "agy-fleet-mcp",
+    "description": "Sync MCP fleet into Antigravity CLI",
+    "url": "http://127.0.0.1:10793"
+  },
+  {
+    "id": "notebooklm-mcp-cli",
+    "label": "notebooklm-mcp-cli (upstream)",
+    "description": "PyPI package — nlm CLI + notebooklm-mcp server",
+    "url": "https://github.com/jacob-bd/notebooklm-mcp-cli"
+  }
+]

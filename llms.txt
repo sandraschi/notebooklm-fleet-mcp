@@ -1,0 +1,11 @@
+# notebooklm-fleet-mcp
+
+Fleet NotebookLM wrapper — delegates to notebooklm-mcp-cli (`nlm`). Not an API rewrite.
+Ports: 10783 backend, 10784 web_sota glass.
+Entry: uv run python -m notebooklm_fleet_mcp --stdio
+Requires: uv tool install notebooklm-mcp-cli; nlm login
+
+Full reference: llms-full.txt
+Docs: README.md, INSTALL.md, PRD.md, CHANGELOG.md, docs/README.md
+
+Tools (22): notebook_*, source_*, studio/audio/slides, research_start, tag_*, fleet_*, nlm_doctor, pipeline_liveness, notebooklm_help*

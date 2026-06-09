@@ -1,0 +1,33 @@
+{
+  "$schema": "https://glama.ai/schemas/mcp.json",
+  "name": "notebooklm-fleet-mcp",
+  "version": "0.1.0",
+  "description": "Fleet wrapper for NotebookLM via notebooklm-mcp-cli — MCP tools, pipelines, glass dashboard 10783/10784.",
+  "author": "Sandra Schieder",
+  "license": "MIT",
+  "language": "python",
+  "framework": "fastmcp",
+  "type": "mcp_server",
+  "status": "beta",
+  "transport": ["stdio", "http"],
+  "keywords": ["notebooklm", "fleet", "nlm", "fastmcp", "research", "slides"],
+  "packages": [
+    {
+      "registryType": "github",
+      "identifier": "sandraschi/notebooklm-fleet-mcp",
+      "transport": {
+        "type": "stdio",
+        "command": "uv",
+        "args": ["run", "python", "-m", "notebooklm_fleet_mcp", "--stdio"]
+      }
+    },
+    {
+      "registryType": "github",
+      "identifier": "sandraschi/notebooklm-fleet-mcp",
+      "transport": {
+        "type": "http",
+        "url": "http://127.0.0.1:10783/mcp"
+      }
+    }
+  ]
+}

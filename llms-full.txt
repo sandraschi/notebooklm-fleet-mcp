@@ -1,0 +1,115 @@
+# notebooklm-fleet-mcp — full LLM reference
+
+> Long-form index for agents. Tight index: `llms.txt` (same repo).
+
+## Identity
+
+- **Name:** notebooklm-fleet-mcp
+- **Version:** 0.1.0
+- **Stack:** FastMCP 3.2+, Python 3.11+, uv, subprocess to **notebooklm-mcp-cli** (`nlm`).
+- **Upstream:** PyPI `notebooklm-mcp-cli` — NOT reimplemented here.
+- **Transports:** stdio (`python -m notebooklm_fleet_mcp --stdio`) and streamable HTTP (`--serve` / `start.ps1`, FastMCP at `/mcp`).
+- **Dashboard:** React/Vite glass `web_sota/` — ports **10783** backend / **10784** frontend.
+- **Auth:** Machine-local Google session via `nlm login` (required before mutating tools).
+- **Changelog:** `CHANGELOG.md`
+
+## Architecture
+
+```
+Agent (Cursor/Claude/agy)
+    → notebooklm_fleet_mcp (FastMCP + FastAPI :10783)
+        → nlm_client.py (async subprocess)
+            → nlm / notebooklm-mcp-cli
+                → Google NotebookLM
+web_sota (:10784) → REST → backend
+```
+
+## Tool surface (22 tools)
+
+**Help:** `notebooklm_fleet_help`, `notebooklm_help_topics`, `notebooklm_help`
+
+**Notebooks:** `notebook_list`, `notebook_create`, `notebook_query`
+
+**Sources:** `source_list`, `source_add_url`, `source_add_text`
+
+**Studio:** `studio_status`, `audio_create`, `slides_create`, `slides_revise`
+
+**Research:** `research_start` (mode: fast/deep; source: web/drive)
+
+**Tags:** `tag_list`, `tag_add`
+
+**Fleet:** `fleet_ingest_arxiv`, `fleet_ingest_url`, `fleet_link_repo`, `fleet_pipeline_research`
+
+**Health:** `nlm_doctor`, `pipeline_liveness`
+
+## REST API (backend :10783)
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/health` | Backend health |
+| `GET /api/pipeline/liveness` | Supervisor probe (auth, nlm, alerts) |
+| `POST /mcp` | Streamable HTTP MCP |
+| Notebook proxy routes | See `docs/WEBAPP.md` |
+
+## Fleet integrations
+
+| Partner | Role |
+|---------|------|
+| arxiv-mcp (:10770) | `fleet_ingest_arxiv` — abs URLs |
+| fleet-registry | `fleet_link_repo` — `fleet:{repo_id}` tags |
+| fleet-agent-mcp | `pipeline_liveness` coworker health |
+| agy-fleet-mcp | Optional Antigravity MCP config sync |
+| notebooklm-mcp (upstream) | Coexist — direct tools when fleet offline |
+
+## Environment (prefix `NOTEBOOKLM_FLEET_`)
+
+- `HOST` — default `127.0.0.1`
+- `PORT` — default `10783`
+- `NLM_BIN` — path to `nlm` executable
+
+See `docs/CONFIGURATION.md`.
+
+## MCPB / Claude Desktop
+
+- Root **`manifest.json`** (MCPB 0.2) + **`assets/`** (`icon.png`, `prompts/system.md`, `user.md`, `examples.json`).
+- Pack: `just mcpb-pack` or `mcpb pack . dist/notebooklm-fleet-mcp.mcpb`.
+- `.mcpbignore` excludes `web_sota/`, `venv`, `llms*.txt`.
+- Bundle does NOT include `nlm` — user installs `notebooklm-mcp-cli` separately.
+
+## Skills
+
+- Bundled **`skill://notebooklm-fleet`** (`skills/notebooklm-fleet/SKILL.md`).
+
+## Install paths
+
+1. **MCPB drag-drop** — `INSTALL.md` Option A
+2. **Source + dashboard** — `.\start.ps1` (Option C)
+3. **MCP client only** — `.\install-mcp.ps1 cursor` (Option D)
+
+Prerequisite: `uv tool install notebooklm-mcp-cli` + `nlm login`.
+
+## Troubleshooting
+
+| Issue | Fix |
+|-------|-----|
+| Auth errors | `nlm login` |
+| `nlm` not found | `uv tool install notebooklm-mcp-cli`; PATH `%USERPROFILE%\.local\bin` |
+| `nlm_doctor` fails | Read stderr in tool response |
+| Dashboard empty | `cd web_sota; npm install` |
+
+Full: `docs/TROUBLESHOOTING.md`
+
+## Documentation map
+
+| File | Topic |
+|------|-------|
+| README.md | Short entry + TOC |
+| INSTALL.md | Options A–D |
+| PRD.md | Product requirements |
+| CHANGELOG.md | Version history |
+| docs/ARCHITECTURE.md | Delegation model |
+| docs/TOOLS.md | Tool reference |
+| docs/FLEET_INTEGRATION.md | Fleet bridges |
+| docs/WEBAPP.md | Glass dashboard |
+| docs/FASTMCP_FEATURES.md | Transport/skills |
+| mcp-central-docs/projects/notebooklm-fleet-mcp/ | MCD project page |

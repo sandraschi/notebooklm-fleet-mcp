@@ -1,0 +1,52 @@
+{
+  "manifest_version": "0.2",
+  "name": "notebooklm-fleet-mcp",
+  "version": "0.1.0",
+  "description": "FastMCP 3.2 fleet wrapper for NotebookLM — delegates to notebooklm-mcp-cli with glass dashboard (10783/10784), arXiv ingest, and fleet repo tagging.",
+  "author": { "name": "Sandra Schieder" },
+  "server": {
+    "type": "python",
+    "entry_point": "src/notebooklm_fleet_mcp/server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "python", "-m", "notebooklm_fleet_mcp", "--stdio"],
+      "env": {
+        "PYTHONUNBUFFERED": "1",
+        "FASTMCP_BANNER": "0",
+        "FASTMCP_UPDATE_CHECK": "0"
+      }
+    }
+  },
+  "user_config": {
+    "nlm_bin": {
+      "type": "string",
+      "title": "nlm executable",
+      "description": "Path to notebooklm-mcp-cli binary (default: nlm on PATH)",
+      "default": "nlm"
+    }
+  },
+  "tools": [
+    { "name": "notebooklm_fleet_help", "description": "Package vs upstream overview" },
+    { "name": "notebook_list", "description": "List NotebookLM notebooks" },
+    { "name": "notebook_create", "description": "Create a notebook" },
+    { "name": "notebook_query", "description": "Grounded Q&A over sources" },
+    { "name": "source_list", "description": "List sources in a notebook" },
+    { "name": "source_add_url", "description": "Add URL source" },
+    { "name": "source_add_text", "description": "Add text source" },
+    { "name": "studio_status", "description": "List studio artifacts" },
+    { "name": "audio_create", "description": "Generate audio overview" },
+    { "name": "slides_create", "description": "Generate slide deck" },
+    { "name": "slides_revise", "description": "Revise slide deck artifact" },
+    { "name": "research_start", "description": "Start web/drive research" },
+    { "name": "tag_list", "description": "List tagged notebooks" },
+    { "name": "tag_add", "description": "Add tags to notebook" },
+    { "name": "fleet_ingest_arxiv", "description": "Ingest arXiv abs URL" },
+    { "name": "fleet_ingest_url", "description": "Ingest URL with optional fleet tag" },
+    { "name": "fleet_link_repo", "description": "Tag fleet:{repo_id}" },
+    { "name": "fleet_pipeline_research", "description": "Create + research + optional slides" },
+    { "name": "nlm_doctor", "description": "Run nlm doctor diagnostics" },
+    { "name": "pipeline_liveness", "description": "Supervisor health probe" },
+    { "name": "notebooklm_help_topics", "description": "List onboard help topics" },
+    { "name": "notebooklm_help", "description": "Markdown help for topic id" }
+  ]
+}
