@@ -77,13 +77,20 @@ async def health() -> dict[str, str]:
 
 @router.get("/stats")
 async def stats() -> dict[str, Any]:
+    count = 0
     try:
         notebooks = await nlm.notebook_list()
         count = notebooks.get("count", 0)
     except nlm.NlmError:
-        count = 0
-    doctor = await nlm.doctor_text()
-    version = await nlm.nlm_version()
+        pass
+    try:
+        doctor = await nlm.doctor_text()
+    except Exception:
+        doctor = {"authenticated": False, "ok": False, "text": "doctor failed"}
+    try:
+        version = await nlm.nlm_version()
+    except Exception:
+        version = {"installed": False, "version": None}
     return {
         "notebooks": count,
         "authenticated": doctor.get("authenticated", False),

@@ -5,7 +5,7 @@ import {
 	Sparkles,
 	Workflow,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiGet } from "@/api/client";
 import { PageHero } from "@/components/layout/PageHero";
@@ -101,40 +101,29 @@ export function Dashboard() {
 	const [live, setLive] = useState<Liveness | null>(null);
 	const [err, setErr] = useState<string | null>(null);
 	const { backendOk, restarting, restartBackend } = useBackendStatus();
-	const fetched = useRef(false);
+
+	const fetchAll = useCallback(async () => {
+		try {
+			const [h, s, l] = await Promise.all([
+				apiGet<Health>("/api/health"),
+				apiGet<Stats>("/api/stats"),
+				apiGet<Liveness>("/api/pipeline/liveness"),
+			]);
+			setHealth(h);
+			setStats(s);
+			setLive(l);
+			setErr(null);
+			log("info", `Health ${h.status} · notebooks ${s.notebooks} · auth ${s.authenticated}`);
+		} catch (e) {
+			const m = e instanceof Error ? e.message : String(e);
+			setErr(m);
+			log("error", m);
+		}
+	}, [log]);
 
 	useEffect(() => {
-		if (fetched.current) return;
-		fetched.current = true;
-		let cancelled = false;
-		(async () => {
-			try {
-				const [h, s, l] = await Promise.all([
-					apiGet<Health>("/api/health"),
-					apiGet<Stats>("/api/stats"),
-					apiGet<Liveness>("/api/pipeline/liveness"),
-				]);
-				if (!cancelled) {
-					setHealth(h);
-					setStats(s);
-					setLive(l);
-					log(
-						"info",
-						`Health ${h.status} · notebooks ${s.notebooks} · auth ${s.authenticated}`,
-					);
-				}
-			} catch (e) {
-				const m = e instanceof Error ? e.message : String(e);
-				if (!cancelled) {
-					setErr(m);
-					log("error", m);
-				}
-			}
-		})();
-		return () => {
-			cancelled = true;
-		};
-	}, [log]);
+		fetchAll();
+	}, [fetchAll]);
 
 	const tiles = [
 		{
@@ -198,12 +187,20 @@ export function Dashboard() {
 					grounded questions, and generate AI podcasts or slide decks.
 				</p>
 				{!stats?.authenticated && (
-					<p className="text-amber-300/90 text-sm">
+					<p className="text-amber-300/90 text-sm flex items-center gap-2 flex-wrap">
 						Not authenticated with Google. Run{" "}
 						<code className="bg-amber-900/30 px-1.5 py-0.5 rounded text-amber-200">
 							nlm login
 						</code>{" "}
-						in a terminal, then reload.
+						in a terminal, then click{" "}
+						<button
+							type="button"
+							onClick={fetchAll}
+							className="underline text-amber-200 hover:text-amber-100"
+						>
+							Refresh
+						</button>
+						.
 					</p>
 				)}
 			</PageHero>

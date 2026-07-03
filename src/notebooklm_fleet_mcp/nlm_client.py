@@ -109,9 +109,29 @@ async def doctor_text(settings: Settings | None = None) -> dict[str, Any]:
     nlm_bin = resolve_nlm_binary(settings)
     if not nlm_bin:
         return {"ok": False, "text": "nlm not found", "authenticated": False}
-    result = await asyncio.to_thread(_run_nlm_sync, ["doctor"], timeout=60.0, nlm_bin=nlm_bin)
+    try:
+        result = await asyncio.to_thread(_run_nlm_sync, ["doctor"], timeout=60.0, nlm_bin=nlm_bin)
+    except NlmError as exc:
+        text = str(exc)
+        authenticated = False
+        return {"ok": False, "text": text, "authenticated": authenticated, "error": str(exc)}
     text = result.stdout or result.stderr or "nlm doctor produced no output"
-    authenticated = "profiles: none" not in text.lower() and "run nlm login" not in text.lower()
+    # Try notebook list as a functional auth check (more reliable than text parsing)
+    authenticated = False
+    try:
+        list_result = await asyncio.to_thread(
+            _run_nlm_sync, ["notebook", "list", "--json"], timeout=30.0, nlm_bin=nlm_bin
+        )
+        authenticated = list_result.success
+    except NlmError:
+        # notebook list failed — check doctor output text
+        lower = text.lower()
+        authenticated = (
+            "authenticated" in lower
+            and "not authenticated" not in lower
+            and "profiles: none" not in lower
+            and "run nlm login" not in lower
+        )
     return {"ok": result.success, "text": text, "authenticated": authenticated}
 
 
