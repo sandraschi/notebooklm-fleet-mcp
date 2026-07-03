@@ -194,16 +194,16 @@ export function Dashboard() {
 					)}
 				</div>
 				<p className="text-muted-foreground text-base leading-relaxed">
-					This app wraps{" "}
-					<strong className="text-foreground">notebooklm-mcp-cli</strong>{" "}
-					(`nlm`) — we do not reimplement Google&apos;s API. Fleet tools add
-					arXiv ingest, repo tags, and glass dashboards on ports{" "}
-					<strong className="text-foreground">10783/10784</strong>.
+					Create Notebooks, add sources (URLs, PDFs, arXiv papers), ask
+					grounded questions, and generate AI podcasts or slide decks.
 				</p>
 				{!stats?.authenticated && (
 					<p className="text-amber-300/90 text-sm">
-						Run <code>nlm login</code> in a terminal to enable notebook
-						operations.
+						Not authenticated with Google. Run{" "}
+						<code className="bg-amber-900/30 px-1.5 py-0.5 rounded text-amber-200">
+							nlm login
+						</code>{" "}
+						in a terminal, then reload.
 					</p>
 				)}
 			</PageHero>
