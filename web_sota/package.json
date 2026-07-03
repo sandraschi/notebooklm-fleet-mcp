@@ -12,18 +12,22 @@
 		"biome": "biome check --write ."
 	},
 	"dependencies": {
-		"@tauri-apps/api": "^2.2.0",
 		"@radix-ui/react-slot": "^1.1.1",
+		"@tauri-apps/api": "^2.2.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"lucide-react": "^0.468.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
+		"react-markdown": "^10.1.0",
 		"react-router-dom": "^7.1.1",
+		"remark-gfm": "^4.0.1",
 		"tailwind-merge": "^2.6.0"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^2.4.12",
 		"@playwright/test": "^1.49.0",
+		"@tailwindcss/typography": "^0.5.20",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
 		"@vitejs/plugin-react": "^4.3.4",
@@ -32,7 +36,6 @@
 		"tailwindcss": "^3.4.17",
 		"tailwindcss-animate": "^1.0.7",
 		"typescript": "~5.7.0",
-		"vite": "^6.0.0",
-		"@biomejs/biome": "^2.4.12"
+		"vite": "^6.0.0"
 	}
 }
