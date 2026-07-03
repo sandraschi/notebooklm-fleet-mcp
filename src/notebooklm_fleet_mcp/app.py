@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import json
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, Literal
 
+import httpx
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -107,6 +109,90 @@ async def api_fleet() -> dict[str, Any]:
     else:
         hubs = []
     return {"hubs": hubs}
+
+
+@router.get("/llm/providers")
+async def llm_providers():
+    providers = []
+    try:
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            resp = await client.get("http://127.0.0.1:11434/api/tags")
+            if resp.status_code == 200:
+                data = resp.json()
+                models = [m["name"] for m in data.get("models", [])]
+                providers.append({
+                    "id": "ollama", "label": "Ollama",
+                    "base_url": "http://127.0.0.1:11434/v1",
+                    "models": models, "needs_key": False,
+                })
+    except Exception:
+        providers.append({
+                    "id": "ollama", "label": "Ollama",
+                    "base_url": "http://127.0.0.1:11434/v1",
+                    "models": [], "needs_key": False,
+                })
+    try:
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            resp = await client.get("http://127.0.0.1:1234/v1/models")
+            if resp.status_code == 200:
+                data = resp.json()
+                models = [m["id"] for m in data.get("models", [])]
+                providers.append({
+                    "id": "lmstudio", "label": "LM Studio",
+                    "base_url": "http://127.0.0.1:1234/v1",
+                    "models": models, "needs_key": False,
+                })
+    except Exception:
+        providers.append({
+                    "id": "lmstudio", "label": "LM Studio",
+                    "base_url": "http://127.0.0.1:1234/v1",
+                    "models": [], "needs_key": False,
+                })
+    return {"providers": providers}
+
+
+@router.post("/llm/chat")
+async def llm_chat(body: dict):
+    provider = body.get("provider", "ollama")
+    model = body.get("model", "llama3.2:3b")
+    prompt = body.get("prompt") or body.get("message", "")
+    base = "http://127.0.0.1:1234/v1" if provider == "lmstudio" else "http://127.0.0.1:11434/v1"
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(f"{base}/chat/completions", json={
+                "model": model,
+                "messages": [{"role": "user", "content": prompt}],
+            })
+            if resp.status_code == 200:
+                data = resp.json()
+                return {"response": data["choices"][0]["message"]["content"]}
+            return {"response": f"HTTP {resp.status_code}"}
+    except Exception as e:
+        return {"response": f"Error: {e}"}
+
+
+@router.get("/v1/diagnostics")
+async def api_diagnostics() -> dict[str, Any]:
+    try:
+        notebooks = await nlm.notebook_list()
+        count = notebooks.get("count", 0)
+    except nlm.NlmError:
+        count = 0
+    doctor = await nlm.doctor_text()
+    version = await nlm.nlm_version()
+    return {
+        "status": "ok",
+        "server": "notebooklm-fleet-mcp",
+        "version": __version__,
+        "uptime_seconds": 0,
+        "tool_count": len(MCP_TOOLS),
+        "tools": [{"name": t["name"]} for t in MCP_TOOLS],
+        "system": {"windows": True},
+        "providers": {"nlm": {"installed": version.get("installed", False), "version": version.get("version")}},
+        "notebooks": count,
+        "authenticated": doctor.get("authenticated", False),
+        "errors": [],
+    }
 
 
 @router.get("/help")
@@ -232,6 +318,7 @@ async def api_fleet_arxiv(notebook_id: str, body: ArxivIngestIn) -> dict[str, An
 
 def build_app() -> FastAPI:
     settings = load_settings()
+    _tauri = os.environ.get("NOTEBOOKLM_FLEET_MCP_TAURI", "").lower() in ("1", "true", "yes")
 
     @asynccontextmanager
     async def app_lifespan(app: FastAPI):
@@ -249,7 +336,11 @@ def build_app() -> FastAPI:
         allow_origins=[
             f"http://127.0.0.1:{settings.port + 1}",
             f"http://localhost:{settings.port + 1}",
-        ],
+            "http://tauri.localhost",
+            "https://tauri.localhost",
+            "tauri://localhost",
+        ] + ([f"http://127.0.0.1:{settings.port}"] if _tauri else []),
+        allow_origin_regex=r"https?://tauri\.localhost(:\d+)?" if _tauri else None,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

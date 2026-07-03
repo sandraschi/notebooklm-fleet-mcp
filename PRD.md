@@ -1,9 +1,9 @@
 # notebooklm-fleet-mcp — Product Requirements Document
 
-**Status:** ACTIVE (v0.1.0 scaffold)  
+**Status:** ACTIVE (v0.1.0 scaffold — fleet-integrated)  
 **Package version:** **0.1.0** (`pyproject.toml`)  
 **Owner:** Sandra Schieder  
-**Ports:** **10783** (HTTP: REST + MCP at `/mcp`) / **10784** (Vite glass frontend)  
+**Ports:** **10783** (HTTP: REST + MCP at `/mcp`) / **10784** (Vite glass frontend) / **10785** (LLM chat proxy)  
 **Upstream:** [notebooklm-mcp-cli](https://pypi.org/project/notebooklm-mcp-cli/) v0.7.x (`nlm`)
 
 ---
@@ -63,8 +63,22 @@ NotebookLM is powerful for grounded research, but:
 - **REQ-020:** Deep arxiv-mcp chain — auto-ingest top papers from search into new notebook.
 - **REQ-021:** aiwatcher-mcp digest → notebook source pipeline.
 - **REQ-022:** memops / advanced-memory notebook export sync.
-- **REQ-023:** Windows desktop installer (Tauri) — deferred; MCPB + source first.
+- **REQ-023:** Windows desktop installer (Tauri) — scaffolded and port-bug-fixed; full certification pending.
 - **REQ-024:** Prefab MCP Apps for slide preview cards.
+
+### Completed in 0.1.0
+
+- **REQ-030:** `GET /api/v1/diagnostics` endpoint for CUA smoke test.
+- **REQ-031:** LLM proxy routes (`/api/llm/providers`, `/api/llm/chat`) integrated into main backend (not port 8000).
+- **REQ-032:** `data-testid` attributes on dashboard KPIs and status badges.
+- **REQ-033:** Exponential backoff retry on health check (1s, 2s, 4s, 8s, 16s).
+- **REQ-034:** Tauri `backend-status` event listener for instant connection state.
+- **REQ-035:** `.cursorrules` session context injection.
+- **REQ-036:** `start.bat` double-click wrapper.
+- **REQ-037:** Fleet starts launcher in `mcp-central-docs/starts/`.
+- **REQ-038:** MCPB 3-4-100 rule: system.md 3k+, user.md 4k+, examples.json 100+.
+- **REQ-039:** `useZoom` hook for Tauri Ctrl+Scroll zoom.
+- **REQ-040:** Biome lint gate (30 files auto-fixed, 0 errors).
 
 ### Non-Functional
 

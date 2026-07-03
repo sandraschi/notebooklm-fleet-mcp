@@ -9,7 +9,7 @@
 
 Fleet orchestration for **Google NotebookLM** — MCP tools, glass dashboard, arXiv ingest, and repo tagging. Delegates to [notebooklm-mcp-cli](https://pypi.org/project/notebooklm-mcp-cli/) (`nlm`); **not** an API rewrite.
 
-**v0.1.0** · FastMCP 3.2 · [CHANGELOG](CHANGELOG.md)
+**v0.1.0** · FastMCP 3.2 · [CHANGELOG](CHANGELOG.md) · [MCPB](dist/notebooklm-fleet-mcp-v0.1.0.mcpb)
 
 ---
 
@@ -19,6 +19,7 @@ Fleet orchestration for **Google NotebookLM** — MCP tools, glass dashboard, ar
 - [Quick start](#quick-start)
 - [What you can do](#what-you-can-do)
 - [Ports](#ports)
+- [Fleet starts](#fleet-starts)
 - [Documentation](#documentation)
 - [Requirements](#requirements)
 - [License](#license)
@@ -33,6 +34,10 @@ Fleet orchestration for **Google NotebookLM** — MCP tools, glass dashboard, ar
 - **Dual transport** — stdio for IDEs, HTTP MCP at `/mcp` on **10783**
 - **Supervisor probes** — `pipeline_liveness` + `nlm_doctor` for fleet-agent health loops
 - **Bundled skill** — `skill://notebooklm-fleet`
+- **NSIS installer** (Tauri 2.0) — single `.exe` with embedded Python backend
+- **MCPB bundle** — Claude Desktop `.mcpb` with 3-4-100 SOTA prompts
+- **Session context injection** — `.cursorrules` for Cursor tool awareness
+- **Fleet starts launcher** — one-click from `mcp-central-docs` (port 10791)
 
 ---
 
@@ -76,6 +81,16 @@ All install paths: **[INSTALL.md](INSTALL.md)**
 |---------|------|
 | Backend (FastAPI + MCP `/mcp`) | **10783** |
 | Frontend (Vite glass) | **10784** |
+| LLM chat proxy | **10785** |
+
+## Fleet starts
+
+From the Fleet Starts UI at http://127.0.0.1:10791, search for "notebooklm".
+Alternatively, run the launcher directly:
+
+```powershell
+D:\Dev\repos\mcp-central-docs\starts\notebooklm-start.bat
+```
 
 ---
 

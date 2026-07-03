@@ -47,6 +47,9 @@ web_sota (:10784) → REST → backend
 | Endpoint | Purpose |
 |----------|---------|
 | `GET /api/health` | Backend health |
+| `GET /api/v1/diagnostics` | Full diagnostics (tools, version, auth) |
+| `GET /api/llm/providers` | Local LLM discovery (Ollama, LM Studio) |
+| `POST /api/llm/chat` | Local LLM chat proxy |
 | `GET /api/pipeline/liveness` | Supervisor probe (auth, nlm, alerts) |
 | `POST /mcp` | Streamable HTTP MCP |
 | Notebook proxy routes | See `docs/WEBAPP.md` |

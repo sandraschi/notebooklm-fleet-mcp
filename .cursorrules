@@ -1,0 +1,12 @@
+## Session Context (notebooklm-fleet-mcp)
+
+You have access to a Google NotebookLM fleet orchestration wrapper with 22 tools.
+All operations delegate to `nlm` subprocess -- do NOT reimplement Google API calls.
+
+**Before starting work:**
+1. Check liveness and nlm auth: pipeline_liveness() then nlm_doctor()
+2. List available notebooks: notebook_list()
+
+**At end of work:**
+- Ingest relevant content to notebooks via source_add_url or source_add_text
+- Tag notebooks with fleet: tags for fleet-registry linkage

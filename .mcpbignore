@@ -21,6 +21,14 @@ dist/
 build/
 *.mcpb
 
+# Egg-info metadata
+*.egg-info/
+package.json
+package-lock.json
+
+# Backup files
+*.bak
+
 # Docs not required in bundle (README + CHANGELOG included per fleet standard)
 docs/
 INSTALL.md

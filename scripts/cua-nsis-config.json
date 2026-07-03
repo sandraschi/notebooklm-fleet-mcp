@@ -1,0 +1,14 @@
+{
+    "product_name": "Notebooklm Fleet MCP",
+    "install_dir": "%LOCALAPPDATA%\\Notebooklm Fleet MCP",
+    "operator_exe": "notebooklm-fleet-mcp-native.exe",
+    "backend_process_names": ["notebooklm-fleet-mcp-native", "notebooklm-fleet-mcp-backend"],
+    "backend_port": 10783,
+    "health_path": "/api/health",
+    "diagnostics_path": "/api/v1/diagnostics",
+    "feature_smoke_path": "/api/health",
+    "window_title_re": "Notebooklm Fleet MCP",
+    "nsis_glob": "native/target/release/bundle/nsis/Notebooklm Fleet MCP_*_x64-setup.exe",
+    "bridge_ok_text": "REST bridge reachable",
+    "uninstall_registry_filter": "*Notebooklm Fleet MCP*"
+}
