@@ -18,13 +18,9 @@ const TAB_ORDER = ["start", "reference", "operations", "integration"];
 export function HelpPage() {
 	const [topics, setTopics] = useState<Topic[]>([]);
 	const [activeTab, setActiveTab] = useState("start");
-	const [selectedTopic, setSelectedTopic] = useState<string | null>("index");
+	const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 	const [content, setContent] = useState("");
 	const [loading, setLoading] = useState(false);
-
-	useEffect(() => {
-		apiGet<{ topics: Topic[] }>("/api/help").then((d) => setTopics(d.topics));
-	}, []);
 
 	const fetchContent = useCallback(async (topicId: string) => {
 		setLoading(true);
@@ -38,11 +34,20 @@ export function HelpPage() {
 		setLoading(false);
 	}, []);
 
-	useEffect(() => {
-		if (topics.length > 0) fetchContent("index");
-	}, [topics, fetchContent]);
-
 	const tabTopicIds = GROUPS[activeTab]?.ids ?? [];
+
+	useEffect(() => {
+		apiGet<{ topics: Topic[] }>("/api/help").then((d) => {
+			setTopics(d.topics);
+		});
+	}, []);
+
+	// auto-select first topic when tab or topics change
+	useEffect(() => {
+		const first = tabTopicIds[0];
+		if (first && selectedTopic !== first) fetchContent(first);
+	}, [activeTab, topics.length, fetchContent]);
+
 	const tabTopics = topics.filter((t) => tabTopicIds.includes(t.id));
 
 	return (
