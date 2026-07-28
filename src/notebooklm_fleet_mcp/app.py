@@ -23,7 +23,7 @@ from notebooklm_fleet_mcp.server import mcp
 from notebooklm_fleet_mcp.startup_probe import run_startup_probes
 from notebooklm_fleet_mcp.tools_manifest import MCP_TOOLS
 
-mcp_http = mcp.http_app(path="/mcp")
+mcp_http = mcp.http_app(path="/")
 router = APIRouter(prefix="/api")
 _FLEET_PATH = Path(__file__).resolve().parent / "data" / "fleet_default.json"
 
@@ -127,34 +127,50 @@ async def llm_providers():
             if resp.status_code == 200:
                 data = resp.json()
                 models = [m["name"] for m in data.get("models", [])]
-                providers.append({
-                    "id": "ollama", "label": "Ollama",
-                    "base_url": "http://127.0.0.1:11434/v1",
-                    "models": models, "needs_key": False,
-                })
+                providers.append(
+                    {
+                        "id": "ollama",
+                        "label": "Ollama",
+                        "base_url": "http://127.0.0.1:11434/v1",
+                        "models": models,
+                        "needs_key": False,
+                    }
+                )
     except Exception:
-        providers.append({
-                    "id": "ollama", "label": "Ollama",
-                    "base_url": "http://127.0.0.1:11434/v1",
-                    "models": [], "needs_key": False,
-                })
+        providers.append(
+            {
+                "id": "ollama",
+                "label": "Ollama",
+                "base_url": "http://127.0.0.1:11434/v1",
+                "models": [],
+                "needs_key": False,
+            }
+        )
     try:
         async with httpx.AsyncClient(timeout=3.0) as client:
             resp = await client.get("http://127.0.0.1:1234/v1/models")
             if resp.status_code == 200:
                 data = resp.json()
                 models = [m["id"] for m in data.get("models", [])]
-                providers.append({
-                    "id": "lmstudio", "label": "LM Studio",
-                    "base_url": "http://127.0.0.1:1234/v1",
-                    "models": models, "needs_key": False,
-                })
+                providers.append(
+                    {
+                        "id": "lmstudio",
+                        "label": "LM Studio",
+                        "base_url": "http://127.0.0.1:1234/v1",
+                        "models": models,
+                        "needs_key": False,
+                    }
+                )
     except Exception:
-        providers.append({
-                    "id": "lmstudio", "label": "LM Studio",
-                    "base_url": "http://127.0.0.1:1234/v1",
-                    "models": [], "needs_key": False,
-                })
+        providers.append(
+            {
+                "id": "lmstudio",
+                "label": "LM Studio",
+                "base_url": "http://127.0.0.1:1234/v1",
+                "models": [],
+                "needs_key": False,
+            }
+        )
     return {"providers": providers}
 
 
@@ -166,10 +182,13 @@ async def llm_chat(body: dict):
     base = "http://127.0.0.1:1234/v1" if provider == "lmstudio" else "http://127.0.0.1:11434/v1"
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
-            resp = await client.post(f"{base}/chat/completions", json={
-                "model": model,
-                "messages": [{"role": "user", "content": prompt}],
-            })
+            resp = await client.post(
+                f"{base}/chat/completions",
+                json={
+                    "model": model,
+                    "messages": [{"role": "user", "content": prompt}],
+                },
+            )
             if resp.status_code == 200:
                 data = resp.json()
                 return {"response": data["choices"][0]["message"]["content"]}
@@ -346,7 +365,8 @@ def build_app() -> FastAPI:
             "http://tauri.localhost",
             "https://tauri.localhost",
             "tauri://localhost",
-        ] + ([f"http://127.0.0.1:{settings.port}"] if _tauri else []),
+        ]
+        + ([f"http://127.0.0.1:{settings.port}"] if _tauri else []),
         allow_origin_regex=r"https?://tauri\.localhost(:\d+)?" if _tauri else None,
         allow_credentials=True,
         allow_methods=["*"],

@@ -2,8 +2,8 @@ param(
     [switch]$Headless,
     [switch]$BackendOnly,
     [switch]$FrontendOnly,
-    [switch]$NoBrowser
-)
+    [switch]$NoBrowser,
+    [switch]$ReuseIfRunning)
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $FleetStartPath = Join-Path $RepoRoot "scripts\FleetStartMode.ps1"
@@ -14,7 +14,21 @@ if (-not (Test-Path -LiteralPath $FleetStartPath)) {
 . $FleetStartPath
 $FleetStart = Initialize-FleetStartMode @PSBoundParameters
 Enter-FleetHeadlessConsole -Headless:$Headless -BackendOnly:$BackendOnly
-$WindowStyle = $FleetStart.WindowStyle
+
+$portResolve = @{
+    Ports      = @($BackendPort, $FrontendPort)
+    Label      = "notebooklm-fleet-mcp"
+    AllowReuse = $ReuseIfRunning
+}
+if ($ReuseIfRunning) {
+    $portResolve.HealthChecks = @{
+        $BackendPort = "http://127.0.0.1:$BackendPort/api/health"
+        $FrontendPort = "http://127.0.0.1:$FrontendPort/"
+    }
+}
+$portState = Resolve-FleetPortConflict @portResolve
+if ($portState.Action -eq 'Blocked') { exit 1 }
+if ($portState.Reuse) { return }$WindowStyle = $FleetStart.WindowStyle
 $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" +
             [System.Environment]::GetEnvironmentVariable("PATH","User")
 
@@ -61,8 +75,6 @@ if ($FleetStart.RunFrontend) {
     }
 }
 
-Stop-FleetPortSquatters -Ports @($BackendPort, $FrontendPort) -Label "notebooklm-fleet-mcp"
-if (-not (Assert-FleetPortsAvailable -Ports @($BackendPort, $FrontendPort) -Label "notebooklm-fleet-mcp")) { exit 1 }
 
 Start-Sleep -Milliseconds 500
 
