@@ -16,11 +16,11 @@ async def run_startup_probes(settings: Settings | None = None) -> dict[str, obje
     settings = settings or load_settings()
     nlm = resolve_nlm_binary(settings)
     if not nlm:
-        log.warning("STARTUP PROBE: nlm CLI missing — uv tool install notebooklm-mcp-cli")
+        log.warning("STARTUP PROBE: nlm CLI missing - uv tool install notebooklm-mcp-cli")
 
     doctor = await doctor_text(settings)
     if not doctor.get("authenticated"):
-        log.warning("STARTUP PROBE: NotebookLM not authenticated — run nlm login")
+        log.warning("STARTUP PROBE: NotebookLM not authenticated - run nlm login")
 
     reachable = False
     try:

@@ -1,4 +1,4 @@
-"""FastMCP server — fleet tools delegating to nlm."""
+"""FastMCP server - fleet tools delegating to nlm."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ def notebooklm_fleet_help() -> dict[str, str]:
     """Overview of notebooklm-fleet-mcp vs upstream notebooklm-mcp-cli."""
     return {
         "package": "notebooklm-fleet-mcp",
-        "upstream": "notebooklm-mcp-cli (PyPI) — nlm + notebooklm-mcp",
+        "upstream": "notebooklm-mcp-cli (PyPI) - nlm + notebooklm-mcp",
         "role": "Fleet glass dashboard, MCP tools, arXiv/repo pipelines",
         "auth": "Run `nlm login` once on this machine",
         "ports": "Backend 10783, frontend 10784",
@@ -107,7 +107,7 @@ async def slides_create(
 
 @mcp.tool()
 async def slides_revise(artifact_id: str, slide_instruction: str) -> dict[str, Any]:
-    """Revise slides — format: '1 Make the title larger'."""
+    """Revise slides - format: '1 Make the title larger'."""
     return await nlm.slides_revise(artifact_id, slide_instruction)
 
 
@@ -178,7 +178,7 @@ async def fleet_pipeline_research(
 
 @mcp.tool()
 async def nlm_doctor() -> dict[str, Any]:
-    """Run nlm doctor — installation and auth diagnostics."""
+    """Run nlm doctor - installation and auth diagnostics."""
     return await nlm.doctor_text()
 
 

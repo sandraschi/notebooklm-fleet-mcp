@@ -70,7 +70,7 @@ def _run_nlm_sync(args: list[str], *, timeout: float, nlm_bin: str) -> NlmResult
 
     success = proc.returncode == 0
     if not success and "not authenticated" in (stdout + stderr).lower():
-        raise NlmError("NotebookLM not authenticated — run `nlm login`", exit_code=proc.returncode, stderr=stderr)
+        raise NlmError("NotebookLM not authenticated - run `nlm login`", exit_code=proc.returncode, stderr=stderr)
 
     return NlmResult(
         success=success,
@@ -85,7 +85,7 @@ async def run_nlm(args: list[str], *, timeout: float | None = None, settings: Se
     settings = settings or load_settings()
     nlm_bin = resolve_nlm_binary(settings)
     if not nlm_bin:
-        raise NlmError("nlm CLI not on PATH — install: uv tool install notebooklm-mcp-cli")
+        raise NlmError("nlm CLI not on PATH - install: uv tool install notebooklm-mcp-cli")
     effective_timeout = timeout or settings.query_timeout_seconds
     result = await asyncio.to_thread(_run_nlm_sync, args, timeout=effective_timeout, nlm_bin=nlm_bin)
     if not result.success:
@@ -124,7 +124,7 @@ async def doctor_text(settings: Settings | None = None) -> dict[str, Any]:
         )
         authenticated = list_result.success
     except NlmError:
-        # notebook list failed — check doctor output text
+        # notebook list failed - check doctor output text
         lower = text.lower()
         authenticated = (
             "authenticated" in lower
