@@ -9,3 +9,5 @@ web_sota/node_modules/
 web_sota/dist/
 dist/
 *.mcpb
+
+reports/
