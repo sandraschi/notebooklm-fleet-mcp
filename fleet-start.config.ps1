@@ -2,14 +2,22 @@
 # Edit ports/backend target here - start.ps1 is fleet-standard.
 @{
     Name         = 'notebooklm-fleet-mcp'
-    BackendPort  = 0
-    FrontendPort = 0
-    HealthPath   = '/health'
+    BackendPort  = 10783
+    FrontendPort = 10784
+    HealthPath   = '/api/health'
     WebRoot      = 'D:\Dev\repos\notebooklm-fleet-mcp\web_sota'
+
     Backend = @{
-        Kind = 'none'
+        Kind          = 'uvicorn'
+        UvicornTarget = 'notebooklm_fleet_mcp.app:app'
+        SyncExtras    = @('dev')
+        Env           = @{ NOTEBOOKLM_FLEET_MCP_PORT = '10783' }
     }
+
     Frontend = @{
-        Kind = 'none'
+        Kind           = 'vite-npm'
+        PackageManager = 'npm'
+        PortEnvVar     = 'VITE_PORT'
+        ApiTargetEnv   = 'VITE_API_TARGET'
     }
 }
