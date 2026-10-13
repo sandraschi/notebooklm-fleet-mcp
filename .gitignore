@@ -11,3 +11,6 @@ dist/
 *.mcpb
 
 reports/
+
+# added by wip-sweep v1 2026-10-13: generated dirs
+node_modules/
