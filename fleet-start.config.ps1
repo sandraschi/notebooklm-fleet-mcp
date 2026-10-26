@@ -4,12 +4,17 @@
     Name         = 'notebooklm-fleet-mcp'
     BackendPort  = 10783
     FrontendPort = 10784
-    HealthPath   = '/health'
+    HealthPath   = '/api/health'
     WebRoot      = 'web_sota'
     Backend = @{
-        Kind = 'none'
+        Kind          = 'uvicorn'
+        UvicornTarget = 'notebooklm_fleet_mcp.app:app'
+        SyncExtras    = @('dev')
+        SyncOnStart   = $true
+        Env           = @{ WEB_PORT = '10783' }
     }
     Frontend = @{
-        Kind = 'none'
+        Kind           = 'vite-npm'
+        PackageManager = 'npm'
     }
 }
